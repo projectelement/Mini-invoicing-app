@@ -17,6 +17,7 @@ module.exports = {
           email TEXT,
           company_name TEXT,
           password TEXT
+
         )`);
         
         db.run(`CREATE TABLE invoices (

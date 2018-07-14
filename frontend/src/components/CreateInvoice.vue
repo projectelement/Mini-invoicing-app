@@ -16,9 +16,9 @@
                       </div>
                       
                       <hr />
-                      <h3> Transactions </h3>
+                      <h3> Items </h3>
                       <div class="form-group">
-                        <label for="">Add Transaction:</label>
+                        <label for="">Add Items:</label>
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#transactionModal">
                           +
                         </button>
@@ -27,19 +27,19 @@
                           <div class="modal-dialog" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Add Transaction</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                   <span aria-hidden="true">&times;</span>
                                 </button>
                               </div>
                               <div class="modal-body">
                                 <div class="form-group">
-                                  <label for="">Transaction name</label>
+                                  <label for="">Item name</label>
                                   <input type="text" id="txn_name_modal" class="form-control">
                                 </div>
 
                                 <div class="form-group">
-                                  <label for="">Price ($)</label>
+                                  <label for="">Price (INR)</label>
                                   <input type="numeric" id="txn_price_modal" class="form-control">
                                 </div>
                               </div>
