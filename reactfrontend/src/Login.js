@@ -39,9 +39,10 @@ export default class Login extends Component {
 
           // now send the console notification for success login (to the next route)
           console.log("YAY WE did it");
+          console.log( JSON.stringify(res.data.user));
         } else {
           this.status = res.data.message;
-          console.log("YAY WE F A I L E D");
+          console.log(" WE F A I L E D");
         }
       });
       

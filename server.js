@@ -90,6 +90,58 @@ app.post("/register", multipartMiddleware, function(req, res) {
     db.close();
   });
 });
+app.post("/masterregister", multipartMiddleware, function(req, res) {
+  // check to make sure none of the fields are empty
+  if (
+    isEmpty(req.body.name) ||
+    isEmpty(req.body.email) ||
+    isEmpty(req.body.company_name) ||
+    isEmpty(req.body.password)
+  ) {
+    return res.json({
+      status: false,
+      message: "All fields are required"
+    });
+  }
+
+  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+    let db = new sqlite3.Database("./database/InvoicingApp.db");
+    let sql = `INSERT INTO masterusers(name,email,company_name,password) VALUES('${
+      req.body.name
+    }','${req.body.email}','${req.body.company_name}','${hash}')`;
+    db.run(sql, function(err) {
+      if (err) {
+        throw err;
+      } else {
+        let masteruser_id = this.lastID;
+
+        let query = `SELECT * FROM masterusers WHERE id='${masteruser_id}'`;
+        db.all(query, [], (err, rows) => {
+          if (err) {
+            throw err;
+          }
+          let user = rows[0];
+          delete user.password;
+          //  create payload for JWT
+          const payload = {
+            user: user
+          };
+          // create token
+          let token = jwt.sign(payload, app.get("appSecret"), {
+            expiresIn: "24h" // expires in 24 hours
+          });
+
+          return res.json({
+            status: true,
+            user: user,
+            token: token
+          });
+        });
+      }
+    });
+    db.close();
+  });
+});
 
 app.post("/login", multipartMiddleware, function(req, res) {
   let db = new sqlite3.Database("./database/InvoicingApp.db");
@@ -248,7 +300,24 @@ app.post("/invoice", multipartMiddleware, function(req, res) {
   });
 });
 
-app.get("/invoice/user/:user_id", multipartMiddleware, function(req, res) {
+app.get("/invoice/user/:masteruser_id/", multipartMiddleware, function(req, res) {
+  let db = new sqlite3.Database("./database/InvoicingApp.db");
+  let sql = `SELECT * FROM invoices 
+  WHERE masteruser_id='${req.params.masteruser_id}'`;
+
+  // LEFT JOIN transactions ON invoices.id=transactions.invoice_id
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    return res.json({
+      status: true,
+      invoices: rows
+    });
+  });
+});
+app.get("/invoice/user/:user_id/", multipartMiddleware, function(req, res) {
   let db = new sqlite3.Database("./database/InvoicingApp.db");
   let sql = `SELECT * FROM invoices 
   WHERE user_id='${req.params.user_id}'`;

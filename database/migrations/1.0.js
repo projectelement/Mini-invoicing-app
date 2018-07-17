@@ -11,12 +11,21 @@ module.exports = {
       //   enabling foreign key constraints on sqlite db
       db.run(`PRAGMA foreign_keys = ON`);
       db.serialize(function() {
-        db.run(`CREATE TABLE users (
+        db.run(`CREATE TABLE masterusers (
           id INTEGER PRIMARY KEY,
           name TEXT,
           email TEXT,
           company_name TEXT,
           password TEXT
+
+        )`);
+        db.run(`CREATE TABLE users (
+          id INTEGER PRIMARY KEY,
+          name TEXT,
+          email TEXT,
+          company_name TEXT,
+          password TEXT,
+          FOREIGN KEY(masteruser_id) REFERENCES masterusers(id)
 
         )`);
         
@@ -25,7 +34,8 @@ module.exports = {
           name TEXT,
           user_id INTEGER,
           paid NUMERIC,
-          FOREIGN KEY(user_id) REFERENCES users(id)
+          FOREIGN KEY(user_id) REFERENCES users(id),
+          FOREIGN KEY(masteruser_id) REFERENCES masterusers(id)
         )`);
         
         db.run(`CREATE TABLE transactions (
@@ -48,6 +58,7 @@ module.exports = {
         db.run(`DROP TABLE transactions`);
         db.run(`DROP TABLE invoices`);
         db.run(`DROP TABLE users`);
+        db.run(`DROP TABLE masterusers`);
       });
       db.close();
     });
